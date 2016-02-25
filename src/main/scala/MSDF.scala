@@ -373,7 +373,7 @@ object MSDFMul {
 
     // cA = 1 if a < 0
     val cA = Mux(a === UInt("b01"), UInt(1), UInt(0))
-    
+
     // cB = 1 if b < 0
     val cB = Mux(b === UInt("b01"), UInt(1), UInt(0))
     val nextStart = Bool()
@@ -384,7 +384,7 @@ object MSDFMul {
     // 2w[j] + (x[j]*yj4 + y[j + 1]*xj4)*2^-3
     val (newWS, newWC) = fourToTwoAdder(inWS, inA, inB, inWC, cA, cB)
 
-    // val vS = newWS + newWC 
+    // val vS = newWS + newWC
     val v = newWS(newWS.getWidth() - 1, newWS.getWidth() - 4) + newWC(newWC.getWidth() - 1, newWC.getWidth() - 4)
     val p = SEL(v(v.getWidth() - 1, v.getWidth() - 3))
     val magP = Mux(p === UInt(0), UInt("b0"), UInt("b1"))
@@ -399,17 +399,25 @@ object MSDFMul {
   }
 
   def SEL(a : UInt) : UInt = {
-    MuxCase(UInt("b00"), Array(
-      (a === UInt("b001")) -> UInt("b10"),
-      (a === UInt("b010")) -> UInt("b10"),
-      (a === UInt("b011")) -> UInt("b10"),
-      (a === UInt("b100")) -> UInt("b01"),
-      (a === UInt("b101")) -> UInt("b01"),
-      (a === UInt("b110")) -> UInt("b01")
-      ))
+      val mulSel = Module(new MulSEL())
+      mulSel.io.a := a
+      mulSel.io.o
   }
 
+
   def reportDelay() : Int = 3
+}
+
+class MulSEL extends Module {
+    val io = new Bundle {
+        val a = UInt(INPUT, 3)
+        val o = UInt(OUTPUT, 2)
+    }
+    io.o := MuxCase(UInt("b00"), Array(
+      (Cat(io.a(2), io.a(1) | io.a(0)) === UInt("b01")) -> UInt("b10"),
+      (Cat(io.a(2), io.a(1) & io.a(0)) === UInt("b10")) -> UInt("b01")
+      ))
+
 }
 
 object MSDFDotProduct {
@@ -566,23 +574,29 @@ object MSDFLiteral {
   }
 }
 
+class SDOnlineConversionModule extends Module {
+    val io = new Bundle {
+        val a = UInt(INPUT, 2)
+        val start = Bool(INPUT)
+        val o = UInt(OUTPUT, 14)
+    }
 
-object SDOnlineConversion {
-  def apply(a : UInt, start : Bool) : UInt = {
     val q = Reg(init=UInt(0, width=14))
     val qm = Reg(init=UInt(0, width=14))
-    val counter = Reg(init=UInt(12, width=14))
 
-    val negOne = a === UInt("b01")
-    val one = a === UInt("b10")
+    val negOne = io.a === UInt("b01")
+    val one = io.a === UInt("b10")
     val zero = !negOne & !one
 
     // Q and QM reset
-    val inQ = Mux(start, UInt(0), q)
-    val inQM = Mux(start, UInt(0), qm)
+    val inQ = Mux(io.start, UInt(0), q)
+    val inQM = Mux(io.start, UInt(0), qm)
 
     // Counter reset
-    val inCounter = Mux(start, UInt(11), counter - UInt(1))
+    //val counter = Reg(init=UInt("b100000000000", width=14))
+    //val inCounter = Mux(io.start, UInt("b10000000000"), counter >> UInt(1))
+    val counter = Reg(init=UInt(12, width=14))
+    val inCounter = Mux(io.start, UInt(11), counter - UInt(1))
 
     val nextQM = MuxCase(UInt(0), Array(
       one -> Cat(inQ, UInt(0)),
@@ -600,7 +614,78 @@ object SDOnlineConversion {
     qm := nextQM
     counter := inCounter
 
-    nextQ << inCounter
+    io.o := MuxLeftShift(nextQ, inCounter)
+
+}
+
+object MuxMod {
+    def apply(dec : Bool, tru : UInt, fal : UInt) = {
+        val MuxModu = Module(new MuxModule(tru.getWidth()))
+        MuxModu.io.dec := dec
+        MuxModu.io.tru := tru
+        MuxModu.io.fal := fal
+        MuxModu.io.o
+    }
+}
+
+class MuxModule(wireWidth : Int) extends Module {
+    val io = new Bundle {
+        val dec = Bool(INPUT)
+        val tru = UInt(INPUT, wireWidth)
+        val fal = UInt(INPUT, wireWidth)
+        val o = UInt(OUTPUT, wireWidth)
+    }
+    io.o := Mux(io.dec, io.tru, io.fal)
+
+}
+
+object MuxLeftShift {
+    def apply(in : UInt, shiftAmount : UInt) : UInt = {
+        val lsMod = Module(new MuxLeftShiftModule(in.getWidth()))
+        lsMod.io.in := in
+        lsMod.io.shiftAmount := shiftAmount
+        lsMod.io.o
+    }
+}
+
+class MuxLeftShiftModule(wireWidth : Int) extends Module {
+    val io = new Bundle {
+        val in = UInt(INPUT, wireWidth)
+        val shiftAmount = UInt(INPUT, wireWidth)
+        val o = UInt(OUTPUT, wireWidth)
+    }
+
+    //io.o := io.in
+    val zeroShift   = Mux( io.shiftAmount(0), io.in << 1, io.in )
+    val oneShift    = Mux( io.shiftAmount(1), zeroShift << 2, zeroShift )
+    val twoShift    = Mux( io.shiftAmount(2), oneShift << 4, oneShift )
+    val threeShift  = Mux( io.shiftAmount(3), twoShift << 8, twoShift )
+    val fourShift   = Mux( io.shiftAmount(4), threeShift << 16, threeShift )
+    io.o := fourShift
+    
+    //io.o := MuxCase(io.in, Array(
+        //io.shiftAmount(0) -> (io.in << 1),
+        //io.shiftAmount(1) -> (io.in << 2),
+        //io.shiftAmount(2) -> (io.in << 3),
+        //io.shiftAmount(3) -> (io.in << 4),
+        //io.shiftAmount(4) -> (io.in << 5),
+        //io.shiftAmount(5) -> (io.in << 6),
+        //io.shiftAmount(6) -> (io.in << 7),
+        //io.shiftAmount(7) -> (io.in << 8),
+        //io.shiftAmount(8) -> (io.in << 9),
+        //io.shiftAmount(9) -> (io.in << 10),
+        //io.shiftAmount(10) -> (io.in << 11),
+        //io.shiftAmount(11) -> (io.in << 12)
+        //))
+
+}
+
+object SDOnlineConversion {
+  def apply(a : UInt, start : Bool) : UInt = {
+    val SDModule = Module(new SDOnlineConversionModule())
+    SDModule.io.a := a
+    SDModule.io.start := start
+    SDModule.io.o
   }
 
   def apply(in : UInt, inQ : UInt, inQM : UInt, currCounter : UInt) : (UInt, UInt, UInt, UInt) = {
