@@ -39,12 +39,66 @@ class MSDFAddModule extends Module {
     val start = Bool(INPUT)
     val c = UInt(OUTPUT, 2)
   }
-  io.c := MSDFAdd(io.a, io.b, io.start)
+  io.c := Reg(next=MSDFAdd(Reg(next=io.a), Reg(next=io.b), Reg(next=io.start)))
 }
+
+
+class MSDFLMSModule extends Module {
+    val io = new Bundle {
+        val x = Vec.fill(2){UInt(INPUT, 2)}
+        val inW = Vec.fill(2){UInt(INPUT, 2)}
+        val y = UInt(INPUT, 2)
+        val stepSize = UInt(INPUT, 2)
+        val start = Bool(INPUT)
+        val ybar = UInt(OUTPUT, 2)
+        val outErr = UInt(OUTPUT, 2)
+        val outStep = UInt(OUTPUT, 2)
+        val outW = Vec.fill(2){UInt(OUTPUT, 2)}
+    }
+    val threeDelay = ShiftRegister(io.start, 3)
+    val dotProduct = (io.x, io.inW).zipped.map((ai, bi) => MSDFMul(ai, bi, io.start)).reduce((r, c) => MSDFAdd(r, c, threeDelay)) // 5 Delay
+
+    io.ybar := dotProduct
+
+    val yDelay = UInt(width=2)
+    yDelay := ShiftRegister(io.y, 5)
+    val fiveDelay = ShiftRegister(io.start, 5)
+    val err = MSDFSub(yDelay, dotProduct, fiveDelay) // 2 Delay (7 Total)
+    io.outErr := err
+
+    val stepDelay = UInt(width=2)
+    stepDelay := ShiftRegister(io.stepSize, 7)
+    val sevenDelay = ShiftRegister(io.start, 7)
+    val step = MSDFMul(stepDelay, err, sevenDelay) // 3 Delay (10 Total)
+    io.outStep := step
+
+    val tenDelay = ShiftRegister(io.start, 10)
+    val xDelay = Vec.fill(2){UInt(width=2)}
+    xDelay := ShiftRegister(io.x, 10)
+    val wDelay = Vec.fill(2){UInt(width=2)}
+    wDelay := ShiftRegister(io.inW, 13)
+    val thirteenDelay = ShiftRegister(io.start, 13)
+    val wUpdate = (wDelay, xDelay.map(x1 => MSDFMul(x1, step, tenDelay))).zipped.map((w1, x1) => MSDFAdd(w1, x1, thirteenDelay)) // 5 Delay (15 Total)
+
+    io.outW := wUpdate
+}
+
+class MSDFMulModule extends Module {
+    val io = new Bundle {
+        val a = UInt(INPUT, 2)
+        val b = UInt(INPUT, 2)
+        val start = Bool(INPUT)
+        val c = UInt(OUTPUT, 2)
+    }
+    
+    io.c := Reg(next=MSDFMul(Reg(next=io.a), Reg(next=io.b), Reg(next=io.start)))
+}
+
+
 
 object Top {
   def main(args: Array[String]): Unit = {
     val theArgs = Array("--backend", "v", "--genHarness")
-    chiselMain(theArgs, () => Module(new MSDFAddModule()))
+    chiselMain(theArgs, () => Module(new MSDFLMSModule()))
   }
 }

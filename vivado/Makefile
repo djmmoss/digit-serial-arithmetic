@@ -1,4 +1,4 @@
-DESIGN = MSDFAddModule
+DESIGN = MSDFLMSModule
 DEVICE = xc7vx485tffg1761-2
 XDC_FILE = ./constraints/${DESIGN}.xdc
 

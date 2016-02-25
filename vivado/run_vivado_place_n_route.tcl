@@ -13,11 +13,6 @@ phys_opt_design -directive Explore
 # Routing Design
 route_design -directive Explore
 
-place_design -post_place_opt
-phys_opt_design -fanout_opt -retime -placement_opt -rewire -critical_cell_opt -shift_register_opt -dsp_register_opt -hold_fix
-route_design -directive NoTimingRelaxation
-
-
 # Saving Run
 write_checkpoint -force ./${DESIGN}_route.dcp
 
