@@ -99,6 +99,6 @@ class MSDFMulModule extends Module {
 object Top {
   def main(args: Array[String]): Unit = {
     val theArgs = Array("--backend", "v", "--genHarness")
-    chiselMain(theArgs, () => Module(new MSDFLMSModule()))
+    chiselMain(theArgs, () => Module(new MSDFAddModule()))
   }
 }

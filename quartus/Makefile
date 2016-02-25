@@ -5,21 +5,19 @@
 # Settings File (.qsf)
 ###################################################################
 
-PROJECT = Example-Project
-TOP_LEVEL_ENTITY = top_level
+PROJECT = MSDF-Arithmetic
+TOP_LEVEL_ENTITY = MSDFAdd
 ASSIGNMENT_FILES = $(PROJECT).qpf $(PROJECT).qsf
 
 ###################################################################
 # Part, Family, Boardfile DE1 or DE2
 FAMILY = "Cyclone II"
 PART = EP2C35F672C6
-BOARDFILE = DE2Pins
 ###################################################################
 
 ###################################################################
 # Setup your sources here
-SRCS = ../fpga/top_level.v \
-       ../fpga/nios.qsys
+SRCS = ./src/MSDFAddModule.v
 
 ###################################################################
 # Main Targets
@@ -79,8 +77,7 @@ smart.log: $(ASSIGNMENT_FILES)
 ###################################################################
 
 $(ASSIGNMENT_FILES):
-	quartus_sh --prepare -f $(FAMILY) -t $(TOP_LEVEL_ENTITY) $(PROJECT)
-	-cat $(BOARDFILE) >> $(PROJECT).qsf
+	quartus_sh --prepare -f $(FAMILY) -t $(TOP_LEVEL_ENTITY) $(PROJECT) >> $(PROJECT).qsf
 map.chg:
 	$(STAMP) map.chg
 fit.chg:
