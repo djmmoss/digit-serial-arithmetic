@@ -6,14 +6,13 @@
 ###################################################################
 
 PROJECT = MSDF-Arithmetic
-TOP_LEVEL_ENTITY = MSDFAddModule
+TOP_LEVEL_ENTITY = MSDFMulModule
 ASSIGNMENT_FILES = $(PROJECT).qpf $(PROJECT).qsf
 
 ###################################################################
 # Part, Family, Boardfile DE1 or DE2
 FAMILY = "Stratix V"
 PART = 5SGXEA7N2F45C2
-FMAX = 500MHz
 ###################################################################
 
 ###################################################################
