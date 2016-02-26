@@ -6,13 +6,14 @@
 ###################################################################
 
 PROJECT = MSDF-Arithmetic
-TOP_LEVEL_ENTITY = MSDFAdd
+TOP_LEVEL_ENTITY = MSDFAddModule
 ASSIGNMENT_FILES = $(PROJECT).qpf $(PROJECT).qsf
 
 ###################################################################
 # Part, Family, Boardfile DE1 or DE2
-FAMILY = "Cyclone II"
-PART = EP2C35F672C6
+FAMILY = "Stratix V"
+PART = 5SGXEA7N2F45C2
+FMAX = 500MHz
 ###################################################################
 
 ###################################################################
@@ -30,7 +31,7 @@ SRCS = ./src/MSDFAddModule.v
 all: smart.log $(PROJECT).asm.rpt $(PROJECT).sta.rpt 
 
 clean:
-	rm -rf *.rpt *.chg smart.log *.htm *.eqn *.pin *.sof *.pof db incremental_db
+	rm -rf *.rpt *.chg smart.log *.htm *.eqn *.pin *.sof *.pof *.qpf *.qsf *.smsg *.jdi *.summary db incremental_db
 
 map: smart.log $(PROJECT).map.rpt
 fit: smart.log $(PROJECT).fit.rpt
@@ -77,7 +78,7 @@ smart.log: $(ASSIGNMENT_FILES)
 ###################################################################
 
 $(ASSIGNMENT_FILES):
-	quartus_sh --prepare -f $(FAMILY) -t $(TOP_LEVEL_ENTITY) $(PROJECT) >> $(PROJECT).qsf
+	quartus_sh --prepare -f $(FAMILY) -t $(TOP_LEVEL_ENTITY) $(PROJECT)
 map.chg:
 	$(STAMP) map.chg
 fit.chg:
