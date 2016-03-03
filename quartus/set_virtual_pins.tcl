@@ -3,7 +3,6 @@ package require cmdline
 
 proc make_all_pins_virtual { src } {
 
-    
     set src_list [format {%s%s} "--source=" $src]
 
     post_message $src_list
