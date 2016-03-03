@@ -6,7 +6,7 @@
 ###################################################################
 
 PROJECT = MSDF-Arithmetic
-TOP_LEVEL_ENTITY = MSDFMulModule
+TOP_LEVEL_ENTITY = FixedDotProductModule
 ASSIGNMENT_FILES = $(PROJECT).qpf $(PROJECT).qsf
 
 ###################################################################
@@ -17,7 +17,7 @@ PART = 5SGXEA7N2F45C2
 
 ###################################################################
 # Setup your sources here
-SRCS = ./src/MSDFAddModule.v
+SRCS = ./src/FixedDotProductModule.v
 
 ###################################################################
 # Main Targets
@@ -30,7 +30,7 @@ SRCS = ./src/MSDFAddModule.v
 all: smart.log $(PROJECT).asm.rpt $(PROJECT).sta.rpt 
 
 clean:
-	rm -rf *.rpt *.chg smart.log *.htm *.eqn *.pin *.sof *.pof *.qpf *.qsf *.smsg *.jdi *.summary db incremental_db
+	rm -rf *.rpt *.chg smart.log *.htm *.eqn *.pin *.sof *.pof *.qpf *.qsf *.smsg *.jdi *.sld *.done *.summary db incremental_db
 
 map: smart.log $(PROJECT).map.rpt
 fit: smart.log $(PROJECT).fit.rpt
@@ -42,9 +42,9 @@ smart: smart.log
 # Executable Configuration
 ###################################################################
 
-MAP_ARGS = --read_settings_files=on $(addprefix --source=,$(SRCS))
+MAP_ARGS = --read_settings_files=on $(addprefix --source=,$(SRCS)) --incremental_compilation=full_incremental_compilation --optimize=speed
 
-FIT_ARGS = --part=$(PART) --read_settings_files=on
+FIT_ARGS = --part=$(PART) --read_settings_files=on --effort=standard
 ASM_ARGS =
 STA_ARGS =
 
@@ -78,6 +78,7 @@ smart.log: $(ASSIGNMENT_FILES)
 
 $(ASSIGNMENT_FILES):
 	quartus_sh --prepare -f $(FAMILY) -t $(TOP_LEVEL_ENTITY) $(PROJECT)
+	quartus_sh -t set_virtual_pins.tcl -project $(PROJECT) -src $(SRCS)
 map.chg:
 	$(STAMP) map.chg
 fit.chg:

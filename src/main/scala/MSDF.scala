@@ -610,13 +610,174 @@ class SDOnlineConversionModule extends Module {
       negOne -> Cat(inQM, UInt(1))
     ))
 
+    counter := inCounter
     q := nextQ
     qm := nextQM
-    counter := inCounter
 
     io.o := MuxLeftShift(nextQ, inCounter)
-
 }
+
+class SDOnlineConversionModule2 extends Module {
+    val io = new Bundle {
+        val a = UInt(INPUT, 2)
+        val start = Bool(INPUT)
+        val o = UInt(OUTPUT, 14)
+    }
+
+    val q = Reg(init=UInt(0, width=12))
+    val qm = Reg(init=UInt(0, width=12))
+
+    val negOne = io.a === UInt("b01")
+    val one = io.a === UInt("b10")
+    val zero = !negOne & !one
+    
+    val nextMask = Reg(init=UInt(1, width=12))
+    val mask = Mux(io.start, UInt(1, width=12), nextMask)
+
+    // Q and QM reset
+    val inQ = Mux(io.start, UInt(0), q)
+    val inQM = Mux(io.start, UInt(0), qm)
+
+
+    //val nextQM = MuxCase(UInt(0), Array(
+      //one -> Cat(UInt("b0"), inQ),
+      //zero -> Cat(UInt("b1"), inQM),
+      //negOne -> Cat(UInt("b0"), inQM)
+    //))
+
+    //val nextQ = MuxCase(UInt(0), Array(
+      //one -> Cat(UInt("b1"), inQ),
+      //zero -> Cat(UInt("b0"), inQ),
+      //negOne -> Cat(UInt("b1"), inQM)
+    //))
+    
+    val nextQM = MuxCase(UInt(0), Array(
+      one -> InsertBits(inQ, UInt("b0"), mask),
+      zero -> InsertBits(inQM, UInt("b1"), mask),
+      negOne -> InsertBits(inQM, UInt("b0"), mask)
+    ))
+
+    val nextQ = MuxCase(UInt(0), Array(
+      one -> InsertBits(inQ, UInt("b1"), mask),
+      zero -> InsertBits(inQ, UInt("b0"), mask),
+      negOne -> InsertBits(inQM, UInt("b1"), mask)
+    ))
+
+    q := nextQ
+    qm := nextQM
+    nextMask := mask << 1
+
+    io.o := nextQ
+}
+
+object InsertBits {
+    def apply(in : UInt, bit : UInt, mask : UInt) : UInt = {
+        val vecIn = Vec.fill(in.getWidth()){UInt(width=1)}
+        for (i <- 0 until in.getWidth()) vecIn(i) := in(i)
+        when( xorR(mask & UInt("b1")) ) {
+            vecIn(in.getWidth() - 1) := bit
+        }
+        .elsewhen ( xorR(mask & UInt("b10"))) {
+            vecIn(in.getWidth() - 2) := bit
+        }
+        .elsewhen( xorR(mask & UInt("b100"))) {
+            vecIn(in.getWidth() - 3) := bit
+        }
+        .elsewhen( xorR(mask & UInt("b1000"))) {
+            vecIn(in.getWidth() - 4) := bit
+        }
+        .elsewhen( xorR(mask & UInt("b10000"))) {
+            vecIn(in.getWidth() - 5) := bit
+        }
+        .elsewhen( xorR(mask & UInt("b100000"))) {
+            vecIn(in.getWidth() - 6) := bit
+        }
+        .elsewhen( xorR(mask & UInt("b1000000"))) {
+            vecIn(in.getWidth() - 7) := bit
+        }
+        .elsewhen( xorR(mask & UInt("b10000000"))) {
+            vecIn(in.getWidth() - 8) := bit
+        }
+        .elsewhen( xorR(mask & UInt("b100000000"))) {
+            vecIn(in.getWidth() - 9) := bit
+        }
+        .elsewhen( xorR(mask & UInt("b1000000000"))) {
+            vecIn(in.getWidth() - 10) := bit
+        }
+        .elsewhen( xorR(mask & UInt("b10000000000"))) {
+            vecIn(in.getWidth() - 11) := bit
+        }
+        .elsewhen( xorR(mask & UInt("b100000000000"))) {
+            vecIn(in.getWidth() - 12) := bit
+        }
+        vecIn.toBits.toUInt
+    }
+}
+
+
+// Reverse Bits with a Mask
+object RevBits {
+    def apply(in : UInt) : UInt = {
+        val vecIn = Vec.fill(in.getWidth()){UInt(width=1)}
+        for (i <- 0 until in.getWidth()) vecIn(i) := in(i)
+        Vec(vecIn.toList.reverse).toBits.toUInt
+    }
+
+    def apply(in : UInt, mask : UInt) : UInt = {
+        val vecIn = Vec.fill(in.getWidth()){UInt(width=1)}
+        val vecSwitch = Vec.fill(in.getWidth()){UInt(width=1)}
+        for (i <- 0 until in.getWidth()) vecIn(i) := in(i)
+        when ( mask === UInt("b10") ) {
+            for (i <- 1 until 3) vecSwitch(in.getWidth() - i) := vecIn(in.getWidth() - (3 - i))
+            for (i <- 0 until in.getWidth() - 2) vecSwitch(i) := vecIn(i)
+        }
+        .elsewhen( mask === UInt("b100") ) {
+            for (i <- 1 until 4) vecSwitch(in.getWidth() - i) := vecIn(in.getWidth() - (4 - i))
+            for (i <- 0 until in.getWidth() - 3) vecSwitch(i) := vecIn(i)
+        }
+        .elsewhen( mask === UInt("b1000")) {
+            for (i <- 1 until 5) vecSwitch(in.getWidth() - i) := vecIn(in.getWidth() - (5 - i))
+            for (i <- 0 until in.getWidth() - 4) vecSwitch(i) := vecIn(i)
+        }
+        .elsewhen( mask === UInt("b10000")) {
+            for (i <- 1 until 6) vecSwitch(in.getWidth() - i) := vecIn(in.getWidth() - (6 - i))
+            for (i <- 0 until in.getWidth() - 5) vecSwitch(i) := vecIn(i)
+        }
+        .elsewhen( mask === UInt("b100000")) {
+            for (i <- 1 until 7) vecSwitch(in.getWidth() - i) := vecIn(in.getWidth() - (7 - i))
+            for (i <- 0 until in.getWidth() - 6) vecSwitch(i) := vecIn(i)
+        }
+        .elsewhen( mask === UInt("b1000000")) {
+            for (i <- 1 until 8) vecSwitch(in.getWidth() - i) := vecIn(in.getWidth() - (8 - i))
+            for (i <- 0 until in.getWidth() - 7) vecSwitch(i) := vecIn(i)
+        }
+        .elsewhen( mask === UInt("b10000000")) {
+            for (i <- 1 until 9) vecSwitch(in.getWidth() - i) := vecIn(in.getWidth() - (9 - i))
+            for (i <- 0 until in.getWidth() - 8) vecSwitch(i) := vecIn(i)
+        }
+        .elsewhen( mask === UInt("b100000000")) {
+            for (i <- 1 until 10) vecSwitch(in.getWidth() - i) := vecIn(in.getWidth() - (10 - i))
+            for (i <- 0 until in.getWidth() - 9) vecSwitch(i) := vecIn(i)
+        }
+        .elsewhen( mask === UInt("b1000000000")) {
+            for (i <- 1 until 11) vecSwitch(in.getWidth() - i) := vecIn(in.getWidth() - (11 - i))
+            for (i <- 0 until in.getWidth() - 10) vecSwitch(i) := vecIn(i)
+        }
+        .elsewhen( mask === UInt("b10000000000")) {
+            for (i <- 1 until 12) vecSwitch(in.getWidth() - i) := vecIn(in.getWidth() - (12 - i))
+            for (i <- 0 until in.getWidth() - 11) vecSwitch(i) := vecIn(i)
+        }
+        .elsewhen( mask === UInt("b100000000000")) {
+            for (i <- 1 until 13) vecSwitch(in.getWidth() - i) := vecIn(in.getWidth() - (13 - i))
+            for (i <- 0 until in.getWidth() - 12) vecSwitch(i) := vecIn(i)
+        }
+        .otherwise {
+            vecSwitch := vecIn
+        }
+        vecSwitch.toBits.toUInt
+    }
+}
+
 
 object MuxMod {
     def apply(dec : Bool, tru : UInt, fal : UInt) = {
@@ -660,9 +821,9 @@ class MuxLeftShiftModule(wireWidth : Int) extends Module {
     val oneShift    = Mux( io.shiftAmount(1), zeroShift << 2, zeroShift )
     val twoShift    = Mux( io.shiftAmount(2), oneShift << 4, oneShift )
     val threeShift  = Mux( io.shiftAmount(3), twoShift << 8, twoShift )
-    val fourShift   = Mux( io.shiftAmount(4), threeShift << 16, threeShift )
-    io.o := fourShift
-    
+    //val fourShift   = Mux( io.shiftAmount(4), threeShift << 16, threeShift )
+    io.o := threeShift
+
     //io.o := MuxCase(io.in, Array(
         //io.shiftAmount(0) -> (io.in << 1),
         //io.shiftAmount(1) -> (io.in << 2),
@@ -682,7 +843,7 @@ class MuxLeftShiftModule(wireWidth : Int) extends Module {
 
 object SDOnlineConversion {
   def apply(a : UInt, start : Bool) : UInt = {
-    val SDModule = Module(new SDOnlineConversionModule())
+    val SDModule = Module(new SDOnlineConversionModule2())
     SDModule.io.a := a
     SDModule.io.start := start
     SDModule.io.o

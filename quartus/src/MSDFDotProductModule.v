@@ -1966,174 +1966,843 @@ module MulSEL(
   assign T13 = io_a[2'h2:2'h2];
 endmodule
 
-module MSDFMulModule(input clk, input reset,
-    input [1:0] io_a,
-    input [1:0] io_b,
+module MSDFDotProductModule(input clk, input reset,
+    input [1:0] io_a_3,
+    input [1:0] io_a_2,
+    input [1:0] io_a_1,
+    input [1:0] io_a_0,
+    input [1:0] io_b_3,
+    input [1:0] io_b_2,
+    input [1:0] io_b_1,
+    input [1:0] io_b_0,
     input  io_start,
     output[1:0] io_c
 );
 
-  wire[2:0] T0;
-  wire[3:0] T1;
-  wire[3:0] T2;
-  wire[3:0] T3;
-  wire T4;
-  reg [1:0] R5;
-  wire T6;
-  reg [1:0] R7;
-  wire[13:0] T8;
-  reg [13:0] R9;
-  wire[13:0] T45;
-  wire[13:0] T46;
-  wire[10:0] T10;
-  wire[9:0] T11;
-  wire T12;
+  wire T0;
+  wire T1;
+  reg  R2;
+  wire T235;
+  wire T3;
+  wire[1:0] T4;
+  wire[1:0] T5;
+  wire[1:0] T6;
+  wire T7;
+  wire T8;
+  wire T9;
+  wire T10;
+  reg  R11;
+  reg  R12;
   reg  R13;
-  wire[13:0] T14;
-  wire[13:0] T15;
-  wire[13:0] T16;
-  wire[13:0] T17;
-  wire[13:0] T47;
-  wire[10:0] T18;
+  reg  R14;
+  wire T15;
+  reg  R16;
+  wire T236;
+  reg  R17;
+  wire T237;
+  wire T18;
   wire T19;
-  wire[13:0] T20;
+  wire T20;
   wire T21;
-  wire[13:0] T22;
-  wire[13:0] T23;
-  wire[13:0] T24;
-  wire[13:0] T25;
-  reg [13:0] R26;
-  wire[13:0] T48;
-  wire[13:0] T49;
-  wire[10:0] T27;
+  wire T22;
+  wire[1:0] T23;
+  wire[1:0] T24;
+  wire[1:0] T25;
+  wire T26;
+  wire T27;
   wire T28;
-  wire[13:0] T29;
-  wire T30;
-  wire[13:0] T31;
-  reg [13:0] R32;
-  wire[13:0] T50;
-  wire[14:0] T51;
-  wire[14:0] T33;
-  wire[13:0] T34;
-  wire[13:0] T35;
-  wire[11:0] T36;
-  wire[9:0] T37;
-  wire[1:0] T38;
-  wire[1:0] T39;
+  wire T29;
+  reg  R30;
+  wire T31;
+  reg  R32;
+  wire T238;
+  wire T33;
+  wire T34;
+  wire T35;
+  wire T36;
+  reg  R37;
+  wire T239;
+  wire T38;
+  reg  R39;
+  wire T240;
   wire T40;
   wire T41;
   wire T42;
   wire T43;
-  reg [1:0] R44;
+  wire T44;
+  wire T45;
+  wire T46;
+  wire T47;
+  wire T48;
+  reg  R49;
+  wire T241;
+  wire T50;
+  reg  R51;
+  wire T242;
+  wire T52;
+  wire T53;
+  wire T54;
+  wire T55;
+  wire T56;
+  wire T57;
+  wire T58;
+  wire[2:0] T59;
+  wire[3:0] T60;
+  wire[3:0] T61;
+  wire[3:0] T62;
+  wire T63;
+  wire T64;
+  wire[13:0] T65;
+  reg [13:0] R66;
+  wire[13:0] T243;
+  wire[13:0] T244;
+  wire[10:0] T67;
+  wire[9:0] T68;
+  wire T69;
+  wire[13:0] T70;
+  wire[13:0] T71;
+  wire[13:0] T72;
+  wire[13:0] T73;
+  wire[13:0] T245;
+  wire[10:0] T74;
+  wire T75;
+  wire[13:0] T76;
+  wire T77;
+  wire[13:0] T78;
+  wire[13:0] T79;
+  wire[13:0] T80;
+  wire[13:0] T81;
+  reg [13:0] R82;
+  wire[13:0] T246;
+  wire[13:0] T247;
+  wire[10:0] T83;
+  wire T84;
+  wire[13:0] T85;
+  wire T86;
+  wire[13:0] T87;
+  reg [13:0] R88;
+  wire[13:0] T248;
+  wire[14:0] T249;
+  wire[14:0] T89;
+  wire[13:0] T90;
+  wire[13:0] T91;
+  wire[11:0] T92;
+  wire[9:0] T93;
+  wire[1:0] T94;
+  wire[1:0] T95;
+  wire T96;
+  wire T97;
+  wire T98;
+  wire T99;
+  wire[2:0] T100;
+  wire[3:0] T101;
+  wire[3:0] T102;
+  wire[3:0] T103;
+  wire T104;
+  wire T105;
+  wire[13:0] T106;
+  reg [13:0] R107;
+  wire[13:0] T250;
+  wire[13:0] T251;
+  wire[10:0] T108;
+  wire[9:0] T109;
+  wire T110;
+  wire[13:0] T111;
+  wire[13:0] T112;
+  wire[13:0] T113;
+  wire[13:0] T114;
+  wire[13:0] T252;
+  wire[10:0] T115;
+  wire T116;
+  wire[13:0] T117;
+  wire T118;
+  wire[13:0] T119;
+  wire[13:0] T120;
+  wire[13:0] T121;
+  wire[13:0] T122;
+  reg [13:0] R123;
+  wire[13:0] T253;
+  wire[13:0] T254;
+  wire[10:0] T124;
+  wire T125;
+  wire[13:0] T126;
+  wire T127;
+  wire[13:0] T128;
+  reg [13:0] R129;
+  wire[13:0] T255;
+  wire[14:0] T256;
+  wire[14:0] T130;
+  wire[13:0] T131;
+  wire[13:0] T132;
+  wire[11:0] T133;
+  wire[9:0] T134;
+  wire[1:0] T135;
+  wire[1:0] T136;
+  wire T137;
+  wire T138;
+  wire T139;
+  wire T140;
+  wire[2:0] T141;
+  wire[3:0] T142;
+  wire[3:0] T143;
+  wire[3:0] T144;
+  wire T145;
+  wire T146;
+  wire[13:0] T147;
+  reg [13:0] R148;
+  wire[13:0] T257;
+  wire[13:0] T258;
+  wire[10:0] T149;
+  wire[9:0] T150;
+  wire T151;
+  wire[13:0] T152;
+  wire[13:0] T153;
+  wire[13:0] T154;
+  wire[13:0] T155;
+  wire[13:0] T259;
+  wire[10:0] T156;
+  wire T157;
+  wire[13:0] T158;
+  wire T159;
+  wire[13:0] T160;
+  wire[13:0] T161;
+  wire[13:0] T162;
+  wire[13:0] T163;
+  reg [13:0] R164;
+  wire[13:0] T260;
+  wire[13:0] T261;
+  wire[10:0] T165;
+  wire T166;
+  wire[13:0] T167;
+  wire T168;
+  wire[13:0] T169;
+  reg [13:0] R170;
+  wire[13:0] T262;
+  wire[14:0] T263;
+  wire[14:0] T171;
+  wire[13:0] T172;
+  wire[13:0] T173;
+  wire[11:0] T174;
+  wire[9:0] T175;
+  wire[1:0] T176;
+  wire[1:0] T177;
+  wire T178;
+  wire T179;
+  wire T180;
+  wire T181;
+  wire[2:0] T182;
+  wire[3:0] T183;
+  wire[3:0] T184;
+  wire[3:0] T185;
+  wire T186;
+  wire T187;
+  wire[13:0] T188;
+  reg [13:0] R189;
+  wire[13:0] T264;
+  wire[13:0] T265;
+  wire[10:0] T190;
+  wire[9:0] T191;
+  wire T192;
+  wire[13:0] T193;
+  wire[13:0] T194;
+  wire[13:0] T195;
+  wire[13:0] T196;
+  wire[13:0] T266;
+  wire[10:0] T197;
+  wire T198;
+  wire[13:0] T199;
+  wire T200;
+  wire[13:0] T201;
+  wire[13:0] T202;
+  wire[13:0] T203;
+  wire[13:0] T204;
+  reg [13:0] R205;
+  wire[13:0] T267;
+  wire[13:0] T268;
+  wire[10:0] T206;
+  wire T207;
+  wire[13:0] T208;
+  wire T209;
+  wire[13:0] T210;
+  reg [13:0] R211;
+  wire[13:0] T269;
+  wire[14:0] T270;
+  wire[14:0] T212;
+  wire[13:0] T213;
+  wire[13:0] T214;
+  wire[11:0] T215;
+  wire[9:0] T216;
+  wire[1:0] T217;
+  wire[1:0] T218;
+  wire T219;
+  wire T220;
+  wire T221;
+  wire T222;
+  wire[1:0] T223;
+  wire[1:0] T224;
+  wire[1:0] T225;
+  wire T226;
+  wire T227;
+  wire T228;
+  wire T229;
+  reg  R230;
+  reg  R231;
+  reg  R232;
+  wire T233;
+  reg  R234;
+  wire T271;
   wire[13:0] SDOnlineConversionModule2_io_o;
   wire[13:0] SDOnlineConversionModule2_1_io_o;
   wire[1:0] MulSEL_io_o;
+  wire[13:0] SDOnlineConversionModule2_2_io_o;
+  wire[13:0] SDOnlineConversionModule2_3_io_o;
+  wire[1:0] MulSEL_1_io_o;
+  wire[13:0] SDOnlineConversionModule2_4_io_o;
+  wire[13:0] SDOnlineConversionModule2_5_io_o;
+  wire[1:0] MulSEL_2_io_o;
+  wire[13:0] SDOnlineConversionModule2_6_io_o;
+  wire[13:0] SDOnlineConversionModule2_7_io_o;
+  wire[1:0] MulSEL_3_io_o;
+  wire FullAdderModule_io_o;
+  wire FullAdderModule_io_cout;
+  wire FullAdderModule_1_io_o;
+  wire FullAdderModule_1_io_cout;
+  wire FullAdderModule_2_io_o;
+  wire FullAdderModule_2_io_cout;
+  wire FullAdderModule_3_io_o;
+  wire FullAdderModule_3_io_cout;
+  wire FullAdderModule_4_io_o;
+  wire FullAdderModule_4_io_cout;
+  wire FullAdderModule_5_io_o;
+  wire FullAdderModule_5_io_cout;
   wire[13:0] fourToTwoAdderModule_io_o;
   wire[13:0] fourToTwoAdderModule_io_cout;
+  wire[13:0] fourToTwoAdderModule_1_io_o;
+  wire[13:0] fourToTwoAdderModule_1_io_cout;
+  wire[13:0] fourToTwoAdderModule_2_io_o;
+  wire[13:0] fourToTwoAdderModule_2_io_cout;
+  wire[13:0] fourToTwoAdderModule_3_io_o;
+  wire[13:0] fourToTwoAdderModule_3_io_cout;
 
 `ifndef SYNTHESIS
 // synthesis translate_off
   integer initvar;
   initial begin
     #0.002;
-    R5 = {1{$random}};
-    R7 = {1{$random}};
-    R9 = {1{$random}};
+    R2 = {1{$random}};
+    R11 = {1{$random}};
+    R12 = {1{$random}};
     R13 = {1{$random}};
-    R26 = {1{$random}};
+    R14 = {1{$random}};
+    R16 = {1{$random}};
+    R17 = {1{$random}};
+    R30 = {1{$random}};
     R32 = {1{$random}};
-    R44 = {1{$random}};
+    R37 = {1{$random}};
+    R39 = {1{$random}};
+    R49 = {1{$random}};
+    R51 = {1{$random}};
+    R66 = {1{$random}};
+    R82 = {1{$random}};
+    R88 = {1{$random}};
+    R107 = {1{$random}};
+    R123 = {1{$random}};
+    R129 = {1{$random}};
+    R148 = {1{$random}};
+    R164 = {1{$random}};
+    R170 = {1{$random}};
+    R189 = {1{$random}};
+    R205 = {1{$random}};
+    R211 = {1{$random}};
+    R230 = {1{$random}};
+    R231 = {1{$random}};
+    R232 = {1{$random}};
+    R234 = {1{$random}};
   end
 // synthesis translate_on
 `endif
 
-  assign T0 = T1[2'h3:1'h1];
-  assign T1 = T3 + T2;
-  assign T2 = fourToTwoAdderModule_io_cout[4'hd:4'ha];
-  assign T3 = fourToTwoAdderModule_io_o[4'hd:4'ha];
-  assign T4 = R5 == 2'h1;
-  assign T6 = R7 == 2'h1;
-  assign T8 = T12 ? 14'h0 : R9;
-  assign T45 = reset ? 14'h0 : T46;
-  assign T46 = {3'h0, T10};
-  assign T10 = T11 << 1'h1;
-  assign T11 = fourToTwoAdderModule_io_cout[4'h9:1'h0];
-  assign T12 = R13;
-  assign T14 = T15;
-  assign T15 = T21 ? T20 : T16;
-  assign T16 = T19 ? T17 : 14'h0;
-  assign T17 = T47;
-  assign T47 = {3'h0, T18};
-  assign T18 = SDOnlineConversionModule2_1_io_o >> 2'h3;
-  assign T19 = R7 == 2'h2;
-  assign T20 = ~ T17;
-  assign T21 = R7 == 2'h1;
-  assign T22 = T23;
-  assign T23 = R13 ? 14'h0 : T24;
-  assign T24 = T30 ? T29 : T25;
-  assign T25 = T28 ? R26 : 14'h0;
-  assign T48 = reset ? 14'h0 : T49;
-  assign T49 = {3'h0, T27};
-  assign T27 = SDOnlineConversionModule2_io_o >> 2'h3;
-  assign T28 = R5 == 2'h2;
-  assign T29 = ~ R26;
-  assign T30 = R5 == 2'h1;
-  assign T31 = T12 ? 14'h0 : R32;
-  assign T50 = T51[4'hd:1'h0];
-  assign T51 = reset ? 15'h0 : T33;
-  assign T33 = T34 << 1'h1;
-  assign T34 = T35;
-  assign T35 = {T39, T36};
-  assign T36 = {T38, T37};
-  assign T37 = fourToTwoAdderModule_io_o[4'h9:1'h0];
-  assign T38 = T1[1'h1:1'h0];
-  assign T39 = {1'h1, T40};
-  assign T40 = T42 ^ T41;
-  assign T41 = T1[2'h2:2'h2];
-  assign T42 = T43 == 1'h0;
-  assign T43 = MulSEL_io_o == 2'h0;
-  assign io_c = R44;
+  assign T0 = FullAdderModule_4_io_cout;
+  assign T1 = ~ R2;
+  assign T235 = reset ? 1'h0 : T3;
+  assign T3 = T4[1'h0:1'h0];
+  assign T4 = T5;
+  assign T5 = T6;
+  assign T6 = {T15, T7};
+  assign T7 = T8;
+  assign T8 = R11 ? 1'h0 : T9;
+  assign T9 = T10;
+  assign T10 = ~ FullAdderModule_3_io_cout;
+  assign T15 = R16;
+  assign T236 = reset ? 1'h0 : FullAdderModule_3_io_o;
+  assign T237 = reset ? 1'h0 : FullAdderModule_4_io_o;
+  assign T18 = T19;
+  assign T19 = T4[1'h1:1'h1];
+  assign T20 = ~ T21;
+  assign T21 = T22;
+  assign T22 = T23[1'h0:1'h0];
+  assign T23 = T24;
+  assign T24 = T25;
+  assign T25 = {T31, T26};
+  assign T26 = T27;
+  assign T27 = R30 ? 1'h0 : T28;
+  assign T28 = T29;
+  assign T29 = ~ FullAdderModule_1_io_cout;
+  assign T31 = R32;
+  assign T238 = reset ? 1'h0 : FullAdderModule_1_io_o;
+  assign T33 = T34;
+  assign T34 = T23[1'h1:1'h1];
+  assign T35 = FullAdderModule_2_io_cout;
+  assign T36 = ~ R37;
+  assign T239 = reset ? 1'h0 : T38;
+  assign T38 = MulSEL_3_io_o[1'h0:1'h0];
+  assign T240 = reset ? 1'h0 : FullAdderModule_2_io_o;
+  assign T40 = T41;
+  assign T41 = MulSEL_3_io_o[1'h1:1'h1];
+  assign T42 = ~ T43;
+  assign T43 = T44;
+  assign T44 = MulSEL_2_io_o[1'h0:1'h0];
+  assign T45 = T46;
+  assign T46 = MulSEL_2_io_o[1'h1:1'h1];
+  assign T47 = FullAdderModule_io_cout;
+  assign T48 = ~ R49;
+  assign T241 = reset ? 1'h0 : T50;
+  assign T50 = MulSEL_1_io_o[1'h0:1'h0];
+  assign T242 = reset ? 1'h0 : FullAdderModule_io_o;
+  assign T52 = T53;
+  assign T53 = MulSEL_1_io_o[1'h1:1'h1];
+  assign T54 = ~ T55;
+  assign T55 = T56;
+  assign T56 = MulSEL_io_o[1'h0:1'h0];
+  assign T57 = T58;
+  assign T58 = MulSEL_io_o[1'h1:1'h1];
+  assign T59 = T60[2'h3:1'h1];
+  assign T60 = T62 + T61;
+  assign T61 = fourToTwoAdderModule_3_io_cout[4'hd:4'ha];
+  assign T62 = fourToTwoAdderModule_3_io_o[4'hd:4'ha];
+  assign T63 = io_b_3 == 2'h1;
+  assign T64 = io_a_3 == 2'h1;
+  assign T65 = T69 ? 14'h0 : R66;
+  assign T243 = reset ? 14'h0 : T244;
+  assign T244 = {3'h0, T67};
+  assign T67 = T68 << 1'h1;
+  assign T68 = fourToTwoAdderModule_3_io_cout[4'h9:1'h0];
+  assign T69 = io_start;
+  assign T70 = T71;
+  assign T71 = T77 ? T76 : T72;
+  assign T72 = T75 ? T73 : 14'h0;
+  assign T73 = T245;
+  assign T245 = {3'h0, T74};
+  assign T74 = SDOnlineConversionModule2_7_io_o >> 2'h3;
+  assign T75 = io_a_3 == 2'h2;
+  assign T76 = ~ T73;
+  assign T77 = io_a_3 == 2'h1;
+  assign T78 = T79;
+  assign T79 = io_start ? 14'h0 : T80;
+  assign T80 = T86 ? T85 : T81;
+  assign T81 = T84 ? R82 : 14'h0;
+  assign T246 = reset ? 14'h0 : T247;
+  assign T247 = {3'h0, T83};
+  assign T83 = SDOnlineConversionModule2_6_io_o >> 2'h3;
+  assign T84 = io_b_3 == 2'h2;
+  assign T85 = ~ R82;
+  assign T86 = io_b_3 == 2'h1;
+  assign T87 = T69 ? 14'h0 : R88;
+  assign T248 = T249[4'hd:1'h0];
+  assign T249 = reset ? 15'h0 : T89;
+  assign T89 = T90 << 1'h1;
+  assign T90 = T91;
+  assign T91 = {T95, T92};
+  assign T92 = {T94, T93};
+  assign T93 = fourToTwoAdderModule_3_io_o[4'h9:1'h0];
+  assign T94 = T60[1'h1:1'h0];
+  assign T95 = {1'h1, T96};
+  assign T96 = T98 ^ T97;
+  assign T97 = T60[2'h2:2'h2];
+  assign T98 = T99 == 1'h0;
+  assign T99 = MulSEL_3_io_o == 2'h0;
+  assign T100 = T101[2'h3:1'h1];
+  assign T101 = T103 + T102;
+  assign T102 = fourToTwoAdderModule_2_io_cout[4'hd:4'ha];
+  assign T103 = fourToTwoAdderModule_2_io_o[4'hd:4'ha];
+  assign T104 = io_b_2 == 2'h1;
+  assign T105 = io_a_2 == 2'h1;
+  assign T106 = T110 ? 14'h0 : R107;
+  assign T250 = reset ? 14'h0 : T251;
+  assign T251 = {3'h0, T108};
+  assign T108 = T109 << 1'h1;
+  assign T109 = fourToTwoAdderModule_2_io_cout[4'h9:1'h0];
+  assign T110 = io_start;
+  assign T111 = T112;
+  assign T112 = T118 ? T117 : T113;
+  assign T113 = T116 ? T114 : 14'h0;
+  assign T114 = T252;
+  assign T252 = {3'h0, T115};
+  assign T115 = SDOnlineConversionModule2_5_io_o >> 2'h3;
+  assign T116 = io_a_2 == 2'h2;
+  assign T117 = ~ T114;
+  assign T118 = io_a_2 == 2'h1;
+  assign T119 = T120;
+  assign T120 = io_start ? 14'h0 : T121;
+  assign T121 = T127 ? T126 : T122;
+  assign T122 = T125 ? R123 : 14'h0;
+  assign T253 = reset ? 14'h0 : T254;
+  assign T254 = {3'h0, T124};
+  assign T124 = SDOnlineConversionModule2_4_io_o >> 2'h3;
+  assign T125 = io_b_2 == 2'h2;
+  assign T126 = ~ R123;
+  assign T127 = io_b_2 == 2'h1;
+  assign T128 = T110 ? 14'h0 : R129;
+  assign T255 = T256[4'hd:1'h0];
+  assign T256 = reset ? 15'h0 : T130;
+  assign T130 = T131 << 1'h1;
+  assign T131 = T132;
+  assign T132 = {T136, T133};
+  assign T133 = {T135, T134};
+  assign T134 = fourToTwoAdderModule_2_io_o[4'h9:1'h0];
+  assign T135 = T101[1'h1:1'h0];
+  assign T136 = {1'h1, T137};
+  assign T137 = T139 ^ T138;
+  assign T138 = T101[2'h2:2'h2];
+  assign T139 = T140 == 1'h0;
+  assign T140 = MulSEL_2_io_o == 2'h0;
+  assign T141 = T142[2'h3:1'h1];
+  assign T142 = T144 + T143;
+  assign T143 = fourToTwoAdderModule_1_io_cout[4'hd:4'ha];
+  assign T144 = fourToTwoAdderModule_1_io_o[4'hd:4'ha];
+  assign T145 = io_b_1 == 2'h1;
+  assign T146 = io_a_1 == 2'h1;
+  assign T147 = T151 ? 14'h0 : R148;
+  assign T257 = reset ? 14'h0 : T258;
+  assign T258 = {3'h0, T149};
+  assign T149 = T150 << 1'h1;
+  assign T150 = fourToTwoAdderModule_1_io_cout[4'h9:1'h0];
+  assign T151 = io_start;
+  assign T152 = T153;
+  assign T153 = T159 ? T158 : T154;
+  assign T154 = T157 ? T155 : 14'h0;
+  assign T155 = T259;
+  assign T259 = {3'h0, T156};
+  assign T156 = SDOnlineConversionModule2_3_io_o >> 2'h3;
+  assign T157 = io_a_1 == 2'h2;
+  assign T158 = ~ T155;
+  assign T159 = io_a_1 == 2'h1;
+  assign T160 = T161;
+  assign T161 = io_start ? 14'h0 : T162;
+  assign T162 = T168 ? T167 : T163;
+  assign T163 = T166 ? R164 : 14'h0;
+  assign T260 = reset ? 14'h0 : T261;
+  assign T261 = {3'h0, T165};
+  assign T165 = SDOnlineConversionModule2_2_io_o >> 2'h3;
+  assign T166 = io_b_1 == 2'h2;
+  assign T167 = ~ R164;
+  assign T168 = io_b_1 == 2'h1;
+  assign T169 = T151 ? 14'h0 : R170;
+  assign T262 = T263[4'hd:1'h0];
+  assign T263 = reset ? 15'h0 : T171;
+  assign T171 = T172 << 1'h1;
+  assign T172 = T173;
+  assign T173 = {T177, T174};
+  assign T174 = {T176, T175};
+  assign T175 = fourToTwoAdderModule_1_io_o[4'h9:1'h0];
+  assign T176 = T142[1'h1:1'h0];
+  assign T177 = {1'h1, T178};
+  assign T178 = T180 ^ T179;
+  assign T179 = T142[2'h2:2'h2];
+  assign T180 = T181 == 1'h0;
+  assign T181 = MulSEL_1_io_o == 2'h0;
+  assign T182 = T183[2'h3:1'h1];
+  assign T183 = T185 + T184;
+  assign T184 = fourToTwoAdderModule_io_cout[4'hd:4'ha];
+  assign T185 = fourToTwoAdderModule_io_o[4'hd:4'ha];
+  assign T186 = io_b_0 == 2'h1;
+  assign T187 = io_a_0 == 2'h1;
+  assign T188 = T192 ? 14'h0 : R189;
+  assign T264 = reset ? 14'h0 : T265;
+  assign T265 = {3'h0, T190};
+  assign T190 = T191 << 1'h1;
+  assign T191 = fourToTwoAdderModule_io_cout[4'h9:1'h0];
+  assign T192 = io_start;
+  assign T193 = T194;
+  assign T194 = T200 ? T199 : T195;
+  assign T195 = T198 ? T196 : 14'h0;
+  assign T196 = T266;
+  assign T266 = {3'h0, T197};
+  assign T197 = SDOnlineConversionModule2_1_io_o >> 2'h3;
+  assign T198 = io_a_0 == 2'h2;
+  assign T199 = ~ T196;
+  assign T200 = io_a_0 == 2'h1;
+  assign T201 = T202;
+  assign T202 = io_start ? 14'h0 : T203;
+  assign T203 = T209 ? T208 : T204;
+  assign T204 = T207 ? R205 : 14'h0;
+  assign T267 = reset ? 14'h0 : T268;
+  assign T268 = {3'h0, T206};
+  assign T206 = SDOnlineConversionModule2_io_o >> 2'h3;
+  assign T207 = io_b_0 == 2'h2;
+  assign T208 = ~ R205;
+  assign T209 = io_b_0 == 2'h1;
+  assign T210 = T192 ? 14'h0 : R211;
+  assign T269 = T270[4'hd:1'h0];
+  assign T270 = reset ? 15'h0 : T212;
+  assign T212 = T213 << 1'h1;
+  assign T213 = T214;
+  assign T214 = {T218, T215};
+  assign T215 = {T217, T216};
+  assign T216 = fourToTwoAdderModule_io_o[4'h9:1'h0];
+  assign T217 = T183[1'h1:1'h0];
+  assign T218 = {1'h1, T219};
+  assign T219 = T221 ^ T220;
+  assign T220 = T183[2'h2:2'h2];
+  assign T221 = T222 == 1'h0;
+  assign T222 = MulSEL_io_o == 2'h0;
+  assign io_c = T223;
+  assign T223 = T224;
+  assign T224 = T225;
+  assign T225 = {T233, T226};
+  assign T226 = T227;
+  assign T227 = R230 ? 1'h0 : T228;
+  assign T228 = T229;
+  assign T229 = ~ FullAdderModule_5_io_cout;
+  assign T233 = R234;
+  assign T271 = reset ? 1'h0 : FullAdderModule_5_io_o;
   SDOnlineConversionModule2 SDOnlineConversionModule2(.clk(clk), .reset(reset),
-       .io_a( R7 ),
-       .io_start( R13 ),
+       .io_a( io_a_0 ),
+       .io_start( io_start ),
        .io_o( SDOnlineConversionModule2_io_o )
   );
   SDOnlineConversionModule2 SDOnlineConversionModule2_1(.clk(clk), .reset(reset),
-       .io_a( R5 ),
-       .io_start( R13 ),
+       .io_a( io_b_0 ),
+       .io_start( io_start ),
        .io_o( SDOnlineConversionModule2_1_io_o )
   );
   fourToTwoAdderModule fourToTwoAdderModule(
-       .io_a( T31 ),
-       .io_b( T22 ),
-       .io_c( T14 ),
-       .io_d( T8 ),
-       .io_cin1( T6 ),
-       .io_cin2( T4 ),
+       .io_a( T210 ),
+       .io_b( T201 ),
+       .io_c( T193 ),
+       .io_d( T188 ),
+       .io_cin1( T187 ),
+       .io_cin2( T186 ),
        .io_o( fourToTwoAdderModule_io_o ),
        .io_cout( fourToTwoAdderModule_io_cout )
   );
   MulSEL MulSEL(
-       .io_a( T0 ),
+       .io_a( T182 ),
        .io_o( MulSEL_io_o )
+  );
+  SDOnlineConversionModule2 SDOnlineConversionModule2_2(.clk(clk), .reset(reset),
+       .io_a( io_a_1 ),
+       .io_start( io_start ),
+       .io_o( SDOnlineConversionModule2_2_io_o )
+  );
+  SDOnlineConversionModule2 SDOnlineConversionModule2_3(.clk(clk), .reset(reset),
+       .io_a( io_b_1 ),
+       .io_start( io_start ),
+       .io_o( SDOnlineConversionModule2_3_io_o )
+  );
+  fourToTwoAdderModule fourToTwoAdderModule_1(
+       .io_a( T169 ),
+       .io_b( T160 ),
+       .io_c( T152 ),
+       .io_d( T147 ),
+       .io_cin1( T146 ),
+       .io_cin2( T145 ),
+       .io_o( fourToTwoAdderModule_1_io_o ),
+       .io_cout( fourToTwoAdderModule_1_io_cout )
+  );
+  MulSEL MulSEL_1(
+       .io_a( T141 ),
+       .io_o( MulSEL_1_io_o )
+  );
+  SDOnlineConversionModule2 SDOnlineConversionModule2_4(.clk(clk), .reset(reset),
+       .io_a( io_a_2 ),
+       .io_start( io_start ),
+       .io_o( SDOnlineConversionModule2_4_io_o )
+  );
+  SDOnlineConversionModule2 SDOnlineConversionModule2_5(.clk(clk), .reset(reset),
+       .io_a( io_b_2 ),
+       .io_start( io_start ),
+       .io_o( SDOnlineConversionModule2_5_io_o )
+  );
+  fourToTwoAdderModule fourToTwoAdderModule_2(
+       .io_a( T128 ),
+       .io_b( T119 ),
+       .io_c( T111 ),
+       .io_d( T106 ),
+       .io_cin1( T105 ),
+       .io_cin2( T104 ),
+       .io_o( fourToTwoAdderModule_2_io_o ),
+       .io_cout( fourToTwoAdderModule_2_io_cout )
+  );
+  MulSEL MulSEL_2(
+       .io_a( T100 ),
+       .io_o( MulSEL_2_io_o )
+  );
+  SDOnlineConversionModule2 SDOnlineConversionModule2_6(.clk(clk), .reset(reset),
+       .io_a( io_a_3 ),
+       .io_start( io_start ),
+       .io_o( SDOnlineConversionModule2_6_io_o )
+  );
+  SDOnlineConversionModule2 SDOnlineConversionModule2_7(.clk(clk), .reset(reset),
+       .io_a( io_b_3 ),
+       .io_start( io_start ),
+       .io_o( SDOnlineConversionModule2_7_io_o )
+  );
+  fourToTwoAdderModule fourToTwoAdderModule_3(
+       .io_a( T87 ),
+       .io_b( T78 ),
+       .io_c( T70 ),
+       .io_d( T65 ),
+       .io_cin1( T64 ),
+       .io_cin2( T63 ),
+       .io_o( fourToTwoAdderModule_3_io_o ),
+       .io_cout( fourToTwoAdderModule_3_io_cout )
+  );
+  MulSEL MulSEL_3(
+       .io_a( T59 ),
+       .io_o( MulSEL_3_io_o )
+  );
+  FullAdderModule FullAdderModule(
+       .io_a( T57 ),
+       .io_b( T54 ),
+       .io_cin( T52 ),
+       .io_o( FullAdderModule_io_o ),
+       .io_cout( FullAdderModule_io_cout )
+  );
+  FullAdderModule FullAdderModule_1(
+       .io_a( R51 ),
+       .io_b( T48 ),
+       .io_cin( T47 ),
+       .io_o( FullAdderModule_1_io_o ),
+       .io_cout( FullAdderModule_1_io_cout )
+  );
+  FullAdderModule FullAdderModule_2(
+       .io_a( T45 ),
+       .io_b( T42 ),
+       .io_cin( T40 ),
+       .io_o( FullAdderModule_2_io_o ),
+       .io_cout( FullAdderModule_2_io_cout )
+  );
+  FullAdderModule FullAdderModule_3(
+       .io_a( R39 ),
+       .io_b( T36 ),
+       .io_cin( T35 ),
+       .io_o( FullAdderModule_3_io_o ),
+       .io_cout( FullAdderModule_3_io_cout )
+  );
+  FullAdderModule FullAdderModule_4(
+       .io_a( T33 ),
+       .io_b( T20 ),
+       .io_cin( T18 ),
+       .io_o( FullAdderModule_4_io_o ),
+       .io_cout( FullAdderModule_4_io_cout )
+  );
+  FullAdderModule FullAdderModule_5(
+       .io_a( R17 ),
+       .io_b( T1 ),
+       .io_cin( T0 ),
+       .io_o( FullAdderModule_5_io_o ),
+       .io_cout( FullAdderModule_5_io_cout )
   );
 
   always @(posedge clk) begin
-    R5 <= io_b;
-    R7 <= io_a;
     if(reset) begin
-      R9 <= 14'h0;
+      R2 <= 1'h0;
     end else begin
-      R9 <= T46;
+      R2 <= T3;
     end
-    R13 <= io_start;
+    R11 <= R12;
+    R12 <= R13;
+    R13 <= R14;
+    R14 <= io_start;
     if(reset) begin
-      R26 <= 14'h0;
+      R16 <= 1'h0;
     end else begin
-      R26 <= T49;
+      R16 <= FullAdderModule_3_io_o;
     end
-    R32 <= T50;
-    R44 <= MulSEL_io_o;
+    if(reset) begin
+      R17 <= 1'h0;
+    end else begin
+      R17 <= FullAdderModule_4_io_o;
+    end
+    R30 <= R12;
+    if(reset) begin
+      R32 <= 1'h0;
+    end else begin
+      R32 <= FullAdderModule_1_io_o;
+    end
+    if(reset) begin
+      R37 <= 1'h0;
+    end else begin
+      R37 <= T38;
+    end
+    if(reset) begin
+      R39 <= 1'h0;
+    end else begin
+      R39 <= FullAdderModule_2_io_o;
+    end
+    if(reset) begin
+      R49 <= 1'h0;
+    end else begin
+      R49 <= T50;
+    end
+    if(reset) begin
+      R51 <= 1'h0;
+    end else begin
+      R51 <= FullAdderModule_io_o;
+    end
+    if(reset) begin
+      R66 <= 14'h0;
+    end else begin
+      R66 <= T244;
+    end
+    if(reset) begin
+      R82 <= 14'h0;
+    end else begin
+      R82 <= T247;
+    end
+    R88 <= T248;
+    if(reset) begin
+      R107 <= 14'h0;
+    end else begin
+      R107 <= T251;
+    end
+    if(reset) begin
+      R123 <= 14'h0;
+    end else begin
+      R123 <= T254;
+    end
+    R129 <= T255;
+    if(reset) begin
+      R148 <= 14'h0;
+    end else begin
+      R148 <= T258;
+    end
+    if(reset) begin
+      R164 <= 14'h0;
+    end else begin
+      R164 <= T261;
+    end
+    R170 <= T262;
+    if(reset) begin
+      R189 <= 14'h0;
+    end else begin
+      R189 <= T265;
+    end
+    if(reset) begin
+      R205 <= 14'h0;
+    end else begin
+      R205 <= T268;
+    end
+    R211 <= T269;
+    R230 <= R231;
+    R231 <= R232;
+    R232 <= R12;
+    if(reset) begin
+      R234 <= 1'h0;
+    end else begin
+      R234 <= FullAdderModule_5_io_o;
+    end
   end
 endmodule
 

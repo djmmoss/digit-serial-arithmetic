@@ -35,7 +35,7 @@ default: emulator
 all: emulator verilog # dreamer
 
 clean:
-	-rm -f *.h *.hex *.flo *.cpp *.o *.out *.tab *.v *.vcd $(executables)
+	-rm -f *.h *.hex *.flo *.cpp *.o *.out *.tab *.v *.vcd *.cmd *.in $(executables)
 	-rm -rf project/target/ project/project/ target/ test-outputs/
 
 cleanall: clean

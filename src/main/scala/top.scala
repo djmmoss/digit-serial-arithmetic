@@ -94,11 +94,31 @@ class MSDFMulModule extends Module {
     io.c := Reg(next=MSDFMul(Reg(next=io.a), Reg(next=io.b), Reg(next=io.start)))
 }
 
+class MSDFDotProductModule extends Module {
+  val io = new Bundle {
+    val a = Vec.fill(4){UInt(INPUT, 2)}
+    val b = Vec.fill(4){UInt(INPUT, 2)}
+    val start = Bool(INPUT)
+    val c = UInt(OUTPUT, 2)
+  }
+
+  io.c := MSDFDotProduct(io.a, io.b, io.start)
+}
+
+class FixedDotProductModule extends Module {
+    val io = new Bundle {
+        val a = Vec.fill(8){Fixed(INPUT, 32, 16)}
+        val b = Vec.fill(8){Fixed(INPUT, 32, 16)}
+        val c = Fixed(OUTPUT, 32, 16)
+    }
+
+    io.c := RegNext((RegNext(io.a), RegNext(io.b)).zipped.map((aEle, bEle) => aEle*bEle).reduce(_+_))
+}
 
 
 object Top {
   def main(args: Array[String]): Unit = {
     val theArgs = Array("--backend", "v", "--genHarness")
-    chiselMain(theArgs, () => Module(new MSDFMulModule()))
+    chiselMain(theArgs, () => Module(new FixedDotProductModule()))
   }
 }

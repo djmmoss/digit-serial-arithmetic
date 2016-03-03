@@ -43,6 +43,7 @@ class MSDFPrimitivesSuite extends TestSuite {
   val r = scala.util.Random
   val totalWidth = 16
 
+  val doTrace = false
   val digit = 4
   val n = totalWidth/digit
 
@@ -55,7 +56,7 @@ class MSDFPrimitivesSuite extends TestSuite {
       io.c := MSDFMul.SEL(io.a)
     }
 
-    class MSDFMulSELTests(c : MSDFMulSELTest) extends Tester(c) {
+    class MSDFMulSELTests(c : MSDFMulSELTest) extends Tester(c, isTrace=doTrace) {
       val sel = List(
         UInt("b000").litValue(), 
         UInt("b001").litValue(), 
@@ -135,7 +136,7 @@ class MSDFPrimitivesSuite extends TestSuite {
       io.c := MSDFDiv.SEL(io.a)
     }
 
-    class MSDFDivSELTests(c : MSDFDivSELTest) extends Tester(c) {
+    class MSDFDivSELTests(c : MSDFDivSELTest) extends Tester(c, isTrace=doTrace) {
       val sel = List(
         UInt("b00000").litValue(), 
         UInt("b00001").litValue(), 
@@ -224,7 +225,7 @@ class MSDFPrimitivesSuite extends TestSuite {
       io.c := MSDFDiv.U(io.x, io.d, UInt("b0"))
     }
 
-    class MSDFDivUTests(c : MSDFDivUTest) extends Tester(c) {
+    class MSDFDivUTests(c : MSDFDivUTest) extends Tester(c, isTrace=doTrace) {
       val u = List(
         List(UInt("b10").litValue(), UInt("b10").litValue()),
         List(UInt("b10").litValue(), UInt("b00").litValue()),
@@ -321,12 +322,12 @@ class MSDFPrimitivesSuite extends TestSuite {
     class SDOnlineConversionTest extends Module {
       val io = new Bundle {
         val a = UInt(INPUT, 2)
-        val c = UInt(OUTPUT, 12)
+        val c = UInt(OUTPUT, 14)
       }
       io.c := SDOnlineConversion(io.a, Bool(false))
     }
 
-    class SDOnlineConversionTests(c : SDOnlineConversionTest) extends Tester(c) {
+    class SDOnlineConversionTests(c : SDOnlineConversionTest) extends Tester(c, isTrace=true) {
       val q = List(1, 1, 0, 1, -1, 0, 0, -1, 1, 0, 1, 0)
       val qAns = List(
         UInt("b100000000000").litValue(), 
@@ -351,6 +352,49 @@ class MSDFPrimitivesSuite extends TestSuite {
 
     launchCppTester((c : SDOnlineConversionTest) => new SDOnlineConversionTests(c))
   }
+  
+  @Test def testRevBits() {
+    class RevBitsTest extends Module {
+      val io = new Bundle {
+        val a = UInt(INPUT, 6)
+        val c = UInt(OUTPUT, 6)
+      }
+      io.c := RevBits(io.a)
+    }
+
+    class RevBitsTests(c : RevBitsTest) extends Tester(c, isTrace=true) {
+
+        val in  = Integer.parseInt("101001", 2)
+        val exp = Integer.parseInt("100101", 2)
+        poke(c.io.a, in)
+        expect(c.io.c, exp)
+    }
+
+    launchCppTester((c : RevBitsTest) => new RevBitsTests(c))
+  }
+  
+  //@Test def testRevBitsMask() {
+    //class RevBitsMaskTest extends Module {
+      //val io = new Bundle {
+        //val a = UInt(INPUT, 6)
+        //val mask = UInt(INPUT, 6)
+        //val c = UInt(OUTPUT, 6)
+      //}
+      //io.c := RevBits(io.a, io.mask)
+    //}
+
+    //class RevBitsMaskTests(c : RevBitsMaskTest) extends Tester(c, isTrace=true) {
+
+        //val in  = Integer.parseInt("101001", 2)
+        //val mask = Integer.parseInt("001000", 2)
+        //val exp = Integer.parseInt("010101", 2)
+        //poke(c.io.a, in)
+        //poke(c.io.mask, mask)
+        //expect(c.io.c, exp)
+    //}
+
+    //launchCppTester((c : RevBitsMaskTest) => new RevBitsMaskTests(c))
+  //}
 
   @Test def testMSDFAdd() {
     class MSDFAddTest extends Module {
@@ -363,7 +407,7 @@ class MSDFPrimitivesSuite extends TestSuite {
       io.c := MSDFAdd(io.a, io.b, io.start)
     }
 
-    class MSDFAddTests(c : MSDFAddTest) extends Tester(c) {
+    class MSDFAddTests(c : MSDFAddTest) extends Tester(c, isTrace=doTrace) {
       val digitNumber = 1
       for (i <- 0 until trials) {
         val dA = r.nextDouble()/2
@@ -405,7 +449,7 @@ class MSDFPrimitivesSuite extends TestSuite {
       io.c := MSDFSub(io.a, io.b, io.start)
     }
 
-    class MSDFSubTests(c : MSDFSubTest) extends Tester(c) {
+    class MSDFSubTests(c : MSDFSubTest) extends Tester(c, isTrace=doTrace) {
       val digitNumber = 1
       for (i <- 0 until trials) {
         val dA = r.nextDouble()/2
@@ -447,7 +491,7 @@ class MSDFPrimitivesSuite extends TestSuite {
       io.c := MSDFMul(io.a, io.b, io.start)
     }
 
-    class MSDFMulTests(c : MSDFMulTest) extends Tester(c) {
+    class MSDFMulTests(c : MSDFMulTest) extends Tester(c, isTrace=false) {
 
       for (i <- 0 until trials) {
         val dA = r.nextDouble()/2
