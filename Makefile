@@ -36,21 +36,12 @@ all: emulator verilog # dreamer
 
 clean:
 	-rm -f *.h *.hex *.flo *.cpp *.o *.out *.tab *.v *.vcd *.cmd *.in $(executables)
-	-rm -rf project/target/ project/project/ target/ test-outputs/
+	-rm -rf project/ target/ test-outputs/
 
 cleanall: clean
 	-rm -rf $(staging_dir)/*
 
 emulator: $(outs)
-
-normaRun:
-	set -e pipefail; $(SBT) $(SBT_FLAGS) "run NORMARUN $(PARAMSFILE) $(INPUTFILE) $(OUTPUTFILE) --genHarness --compile --test --backend c $(CHISEL_FLAGS)" | tee NORMARUN.out
-
-normaVerilog:
-	set -e pipefail; $(SBT) $(SBT_FLAGS) "run NORMARUN $(PARAMSFILE) blank.csv blank.csv --genHarness --backend v $(CHISEL_FLAGS)"
-
-normaC: norma.o
-	./norma.o
 
 dreamer: $(addsuffix .hex, $(executables))
 
@@ -81,4 +72,4 @@ download: $(staging_targets)
 smoke:
 	$(SBT) $(SBT_FLAGS) compile
 
-.PHONY: all nomraRun normaVerilog normaC check clean cleanall emulator verilog smoke download
+.PHONY: all check clean cleanall emulator verilog smoke download
